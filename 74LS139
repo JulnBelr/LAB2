@@ -1,0 +1,65 @@
+// -------- Pin Definitions --------
+const int EN_A = 2;   // Ea
+const int EN_B = 3;   // Eb
+
+// First decoder
+const int A0a = 5;
+const int A1a = 6;
+
+// Second decoder
+const int A0b = 4;
+const int A1b = 7;
+
+void setup() {
+  pinMode(EN_A, OUTPUT);
+  pinMode(EN_B, OUTPUT);
+
+  pinMode(A0a, OUTPUT);
+  pinMode(A1a, OUTPUT);
+
+  pinMode(A0b, OUTPUT);
+  pinMode(A1b, OUTPUT);
+
+  // Disable both at start
+  digitalWrite(EN_A, HIGH);
+  digitalWrite(EN_B, HIGH);
+}
+
+// Function to select LED 0–7
+void selectLED(int num) {
+
+  // Disable both first
+  digitalWrite(EN_A, HIGH);
+  digitalWrite(EN_B, HIGH);
+
+  if (num < 4) {
+    // First decoder active
+    digitalWrite(EN_A, LOW);
+
+    digitalWrite(A0a, num & 0x01);
+    digitalWrite(A1a, (num >> 1) & 0x01);
+  }
+  else {
+    // Second decoder active
+    digitalWrite(EN_B, LOW);
+
+    int n = num - 4;
+    digitalWrite(A0b, n & 0x01);
+    digitalWrite(A1b, (n >> 1) & 0x01);
+  }
+}
+
+void loop() {
+
+  // Forward 0 → 7
+  for (int i = 0; i < 8; i++) {
+    selectLED(i);
+    delay(120);
+  }
+
+  // Backward 6 → 1
+  for (int i = 6; i > 0; i--) {
+    selectLED(i);
+    delay(120);
+  }
+}
